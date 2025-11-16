@@ -1,0 +1,99 @@
+/* ChatSidebar component styles */
+. {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: transparent;
+    border-right: 1px solid var(--page-border, #009DDC);
+    color: var(--bg-color, #FFFAFF);
+}
+
+.sidebar-header {
+    padding: var(--spacer, 12px);
+    border-bottom: 1px solid var(--page-border, #009DDC);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sidebar-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.sidebar-section {
+    margin: var(--spacerhalf, 6px) 0;
+}
+
+.section-header {
+    padding: 0.5rem var(--spacer, 12px);
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+}
+
+.section-header h3 {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    flex: 1;
+}
+
+.toggle-icon {
+    margin-right: 0.5rem;
+    transition: transform 0.2s;
+}
+
+.toggle-icon.collapsed {
+    transform: rotate(90deg);
+}
+
+.channel-list {
+    max-height: 400px;
+    overflow-y: auto;
+    transition: max-height 0.3s;
+}
+
+.channel-list.collapsed {
+    max-height: 0;
+    overflow: hidden;
+}
+
+.channel-item {
+    padding: 0.5rem var(--spacer, 12px);
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    border-radius: 4px;
+    margin: 0 0.5rem;
+}
+
+.channel-item:hover {
+    background: var(--action-color-hilite, #5ab8e7);
+}
+
+.channel-item.active {
+    background: var(--action-color, #000000);
+    color: var(--bg-color, #FFFAFF);
+}
+
+.channel-item .icon {
+    margin-right: 0.5rem;
+}
+
+.channel-name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.empty-state {
+    padding: 0.5rem var(--spacer, 12px);
+    color: var(--bg-color, #FFFAFF);
+    opacity: 0.7;
+    font-size: 0.9rem;
+    font-style: italic;
+}

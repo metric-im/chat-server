@@ -1,0 +1,18 @@
+/* Chat component - main container layout */
+. {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    width: 100%;
+}
+
+.chat-sidebar {
+    width: 280px;
+    flex-shrink: 0;
+    height: 100%;
+}
+
+.chat-window {
+    flex: 1;
+    height: 100%;
+}

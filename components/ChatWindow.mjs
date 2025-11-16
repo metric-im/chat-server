@@ -1,5 +1,6 @@
 import Component from "./Component.mjs";
 import API from "./API.mjs";
+import ChannelProperties from "./ChannelProperties.mjs";
 
 export default class ChatWindow extends Component {
     constructor(props) {
@@ -50,15 +51,19 @@ export default class ChatWindow extends Component {
         if (!this.channel) return;
 
         try {
-            const latestMessage = this.messages[this.messages.length - 1];
-            const newMessages = await API.get(`/chat/messages/${this.channel._id}`, {
-                after: latestMessage?.createdAt
-            });
+            const allMessages = await API.get(`/chat/messages/${this.channel._id}`);
 
-            if (newMessages.length > 0) {
-                this.messages.push(...newMessages);
-                this.renderMessages();
-                this.scrollToBottom();
+            // Only update if there are new messages
+            if (allMessages.length > this.messages.length) {
+                // Find messages that aren't already in our list
+                const existingIds = new Set(this.messages.map(m => m._id));
+                const newMessages = allMessages.filter(m => !existingIds.has(m._id));
+
+                if (newMessages.length > 0) {
+                    this.messages.push(...newMessages);
+                    this.renderMessages();
+                    this.scrollToBottom();
+                }
             }
         } catch (e) {
             console.error('Error polling messages:', e);
@@ -95,6 +100,7 @@ export default class ChatWindow extends Component {
         // Setup event listeners
         const sendBtn = this.element.querySelector('#send-btn');
         const messageInput = this.element.querySelector('#message-input');
+        const settingsBtn = this.element.querySelector('#channel-settings-btn');
 
         sendBtn.addEventListener('click', () => this.sendMessage());
         messageInput.addEventListener('keydown', (e) => {
@@ -104,6 +110,8 @@ export default class ChatWindow extends Component {
             }
         });
 
+        settingsBtn.addEventListener('click', () => this.openChannelSettings());
+
         // Auto-resize textarea
         messageInput.addEventListener('input', () => {
             messageInput.style.height = 'auto';
@@ -112,6 +120,26 @@ export default class ChatWindow extends Component {
 
         this.renderMessages();
         this.scrollToBottom();
+    }
+
+    async openChannelSettings() {
+        const propertiesDialog = this.new(ChannelProperties, {
+            channel: this.channel
+        });
+
+        await propertiesDialog.render(document.body);
+
+        propertiesDialog.on('saved', async (updatedChannel) => {
+            // Update local channel data
+            this.channel = updatedChannel;
+            // Re-render to show updated channel name/info
+            this.renderChannel();
+            window.toast?.success('Channel updated');
+        });
+
+        propertiesDialog.on('close', () => {
+            propertiesDialog.element.remove();
+        });
     }
 
     renderMessages() {
@@ -179,7 +207,6 @@ export default class ChatWindow extends Component {
                         </div>
                     ` : ''}
                 </div>
-                ${message.edited ? '<span class="edited-indicator">(edited)</span>' : ''}
             `;
 
             messageEl.innerHTML = html;
@@ -227,37 +254,109 @@ export default class ChatWindow extends Component {
     }
 
     async editMessage(message) {
-        const newText = await window.popup.prompt('Edit message:', message.text);
-        if (!newText || newText === message.text) return;
+        // Find the message element
+        const messageEl = this.element.querySelector(`.message[data-message-id="${message._id}"]`);
+        if (!messageEl) return;
 
-        try {
-            const updated = await API.put(`/chat/message/${message._id}`, {
-                text: newText
-            });
+        const messageTextEl = messageEl.querySelector('.message-text');
+        const originalText = message.text;
 
-            // Update message in local array
-            const index = this.messages.findIndex(m => m._id === message._id);
-            if (index !== -1) {
-                this.messages[index] = updated;
-                this.renderMessages();
+        // Make it editable
+        messageTextEl.contentEditable = true;
+        messageTextEl.classList.add('editing');
+        messageTextEl.focus();
+
+        // Select all text
+        const range = document.createRange();
+        range.selectNodeContents(messageTextEl);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        // Create save/cancel buttons
+        const editActions = document.createElement('div');
+        editActions.className = 'edit-actions';
+        editActions.innerHTML = `
+            <button class="btn-save" title="Save (Enter)">
+                <span class="icon icon-check"></span>
+            </button>
+            <button class="btn-cancel" title="Cancel (Esc)">
+                <span class="icon icon-x"></span>
+            </button>
+        `;
+
+        // Hide normal actions, show edit actions
+        const messageActions = messageEl.querySelector('.message-actions');
+        if (messageActions) messageActions.style.display = 'none';
+        messageTextEl.parentElement.appendChild(editActions);
+
+        const save = async () => {
+            const newText = messageTextEl.textContent.trim();
+            if (!newText || newText === originalText) {
+                cancel();
+                return;
             }
 
-            window.toast?.success('Message updated');
-        } catch (e) {
-            console.error('Error editing message:', e);
-            window.toast?.error('Failed to edit message');
-        }
+            try {
+                const updated = await API.put(`/chat/message/${message._id}`, {
+                    text: newText
+                });
+
+                // Update message in local array
+                const index = this.messages.findIndex(m => m._id === message._id);
+                if (index !== -1) {
+                    this.messages[index] = updated;
+                    this.renderMessages();
+                }
+
+                window.toast?.success('Message updated');
+            } catch (e) {
+                console.error('Error editing message:', e);
+                window.toast?.error('Failed to edit message');
+                messageTextEl.textContent = originalText;
+                cancel();
+            }
+        };
+
+        const cancel = () => {
+            messageTextEl.contentEditable = false;
+            messageTextEl.classList.remove('editing');
+            messageTextEl.textContent = originalText;
+            editActions.remove();
+            if (messageActions) messageActions.style.display = 'flex';
+        };
+
+        // Event listeners
+        editActions.querySelector('.btn-save').addEventListener('click', save);
+        editActions.querySelector('.btn-cancel').addEventListener('click', cancel);
+
+        messageTextEl.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                save();
+            } else if (e.key === 'Escape') {
+                e.preventDefault();
+                cancel();
+            }
+        });
+
+        // Save on blur (clicking outside)
+        messageTextEl.addEventListener('blur', (e) => {
+            // Delay to allow button clicks to register
+            setTimeout(() => {
+                if (messageTextEl.contentEditable === 'true') {
+                    save();
+                }
+            }, 200);
+        });
     }
 
     async deleteMessage(messageId) {
-        const confirmed = await window.popup.confirm(
-            'Delete this message?',
-            'This action cannot be undone'
-        );
+        const confirmed = await window.toast.prompt('Delete this message?');
         if (!confirmed) return;
 
         try {
-            await API.delete(`/chat/message/${messageId}`);
+            await API.remove(`/chat/message/${messageId}`);
 
             // Remove message from local array
             this.messages = this.messages.filter(m => m._id !== messageId);

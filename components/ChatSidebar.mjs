@@ -1,5 +1,6 @@
 import Component from "./Component.mjs";
 import API from "./API.mjs";
+import ChannelProperties from "./ChannelProperties.mjs";
 
 export default class ChatSidebar extends Component {
     constructor(props) {
@@ -14,14 +15,14 @@ export default class ChatSidebar extends Component {
         this.element.innerHTML = `
             <div class="sidebar-header">
                 <h2>Chat</h2>
-                <button id="new-channel-btn" class="icon-button" title="New Channel">
-                    <span class="icon icon-plus"></span>
-                </button>
             </div>
             <div class="sidebar-section">
                 <div class="section-header">
                     <span class="icon icon-chevron-right toggle-icon"></span>
                     <h3>Channels</h3>
+                    <button id="new-channel-btn" class="icon-button-small" title="New Channel">
+                        <span class="icon icon-plus"></span>
+                    </button>
                 </div>
                 <div id="channels-list" class="channel-list"></div>
             </div>
@@ -174,24 +175,21 @@ export default class ChatSidebar extends Component {
     }
 
     async createChannel() {
-        const name = await window.toast.prompt('Enter channel name:');
-        if (!name) return;
+        const propertiesDialog = this.new(ChannelProperties, {
+            channel: null // null means creating new channel
+        });
 
-        const type = await window.popup.confirm(
-            'Make this channel public?',
-            'Public channels can be seen by all account members'
-        ) ? 'public' : 'channel';
+        await propertiesDialog.render(document.body);
 
-        try {
-            const channel = await API.post('/chat/channel', { name, type });
+        propertiesDialog.on('saved', async (channel) => {
             this.channels.push(channel);
             this.renderChannels();
             this.selectChannel(channel._id);
-            window.toast?.success('Channel created');
-        } catch (e) {
-            console.error('Error creating channel:', e);
-            window.toast?.error('Failed to create channel');
-        }
+        });
+
+        propertiesDialog.on('close', () => {
+            propertiesDialog.element.remove();
+        });
     }
 
     async createDM() {

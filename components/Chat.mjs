@@ -12,28 +12,12 @@ export default class Chat extends Component {
     async render(element) {
         await super.render(element);
 
-        this.element.innerHTML = `
-            <div class="chat-container">
-                <div id="chat-sidebar" class="chat-sidebar"></div>
-                <div id="chat-window" class="chat-window"></div>
-            </div>
-        `;
-
-        // Render sidebar
-        this.sidebar = this.new(ChatSidebar, {
-            context: this.props.context
-        });
-        await this.sidebar.render(this.element.querySelector('#chat-sidebar'));
+        this.sidebar = await this.draw(ChatSidebar, {context: this.props.context},this.element);
+        this.chatWindow = await this.draw(ChatWindow, {context: this.props.context},this.element);
 
         // Listen for channel selection
         this.sidebar.on('selectChannel', this.selectChannel.bind(this));
         this.sidebar.on('selectDM', this.selectDM.bind(this));
-
-        // Render empty state for chat window
-        this.chatWindow = this.new(ChatWindow, {
-            context: this.props.context
-        });
-        await this.chatWindow.render(this.element.querySelector('#chat-window'));
     }
 
     async selectChannel(channelId) {

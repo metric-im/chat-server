@@ -1,0 +1,236 @@
+/* ChatWindow component styles */
+. {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    height: 100%;
+    background: transparent;
+    color: var(--bg-color, #FFFAFF);
+}
+
+.chat-window-empty {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.empty-message {
+    text-align: center;
+    color: var(--bg-color, #FFFAFF);
+    opacity: 0.7;
+}
+
+.empty-message .icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 1rem;
+}
+
+.chat-header {
+    padding: var(--spacer, 12px);
+    border-bottom: 1px solid var(--page-border, #009DDC);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.channel-info {
+    display: flex;
+    align-items: center;
+}
+
+.channel-info h2 {
+    margin: 0 0 0 0.5rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.messages-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--spacer, 12px);
+}
+
+.empty-messages {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    opacity: 0.7;
+}
+
+.date-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: var(--spacer, 12px) 0;
+    position: relative;
+}
+
+.date-divider::before,
+.date-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--page-border, #009DDC);
+    opacity: 0.5;
+}
+
+.date-divider span {
+    padding: 0 var(--spacer, 12px);
+    opacity: 0.7;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.message.grouped {
+    margin-top: -0.75rem;
+}
+
+.message-header {
+    display: flex;
+    align-items: baseline;
+    margin-bottom: 0.25rem;
+}
+
+.message-user {
+    font-weight: 600;
+    margin-right: 0.5rem;
+}
+
+.message-time {
+    font-size: 0.75rem;
+    opacity: 0.7;
+}
+
+.message {
+    padding: 0.25rem 0.5rem;
+    margin-left: -0.5rem;
+    margin-right: -0.5rem;
+    border-radius: 4px;
+    transition: background-color 0.15s;
+}
+
+.message:hover {
+    background-color: rgba(90, 184, 231, 0.1);
+}
+
+.message-content {
+    display: flex;
+    align-items: start;
+    position: relative;
+}
+
+.message-text {
+    flex: 1;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    line-height: 1.5;
+    padding: 0.25rem;
+    margin: -0.25rem;
+    border-radius: 3px;
+    transition: background-color 0.15s, border 0.15s;
+}
+
+.message-text.editing {
+    background: var(--bg-color-tray, #2a2a3e);
+    border: 1px solid var(--action-color-hilite, #5ab8e7);
+    outline: none;
+}
+
+.message-text.editing:focus {
+    background: var(--bg-color-tray, #2a2a3e);
+}
+
+.message-actions {
+    display: flex;
+    gap: 0.25rem;
+    margin-left: 0.5rem;
+    opacity: 0;
+    transition: opacity 0.15s;
+}
+
+.message:hover .message-actions {
+    opacity: 1;
+}
+
+.edit-actions {
+    display: flex;
+    gap: 0.25rem;
+    margin-left: 0.5rem;
+}
+
+.edit-actions button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.2rem;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.edit-actions .btn-save {
+    color: var(--status-success, green);
+}
+
+.edit-actions .btn-save:hover {
+    background: rgba(0, 255, 0, 0.1);
+}
+
+.edit-actions .btn-cancel {
+    color: var(--status-error, red);
+}
+
+.edit-actions .btn-cancel:hover {
+    background: rgba(255, 0, 0, 0.1);
+}
+
+.message-input-container {
+    padding: var(--spacer, 12px);
+    border-top: 1px solid var(--page-border, #009DDC);
+    display: flex;
+    gap: 0.5rem;
+    align-items: end;
+}
+
+#message-input {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1px solid var(--page-border, #009DDC);
+    border-radius: 4px;
+    resize: none;
+    max-height: 200px;
+    overflow-y: auto;
+    font-family: inherit;
+    font-size: 1rem;
+    background: var(--bg-color-tray, #252537);
+    color: var(--bg-color, #FFFAFF);
+}
+
+#message-input:focus {
+    outline: none;
+    border-color: var(--action-color-hilite, #5ab8e7);
+}
+
+.send-button {
+    padding: 0.5rem 1rem;
+    background: var(--action-color, #000000);
+    color: var(--bg-color, #FFFAFF);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.send-button:hover {
+    background: var(--action-color-hilite, #5ab8e7);
+}
+
+.send-button:active {
+    transform: scale(0.95);
+}

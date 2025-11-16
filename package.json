@@ -9,6 +9,7 @@
   "author": "Michael Sprague",
   "license": "MIT",
   "dependencies": {
+    "@metric-im/common-mixin": "^1.3.24",
     "@metric-im/componentry": "^1.2.6",
     "epistery": "^1.1.4",
     "express": "^4.17.1",

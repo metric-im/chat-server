@@ -66,6 +66,16 @@ export default class ChatServer extends Componentry.Module {
             }
         });
 
+        router.put("/chat/channel/:channelId", async (req, res) => {
+            try {
+                const channel = await this.updateChannel(req.account, req.params.channelId, req.body);
+                res.json(channel);
+            } catch (e) {
+                console.error(e);
+                res.status(500).send(`Error: ${e.message}`);
+            }
+        });
+
         // Direct message routes
         router.get("/chat/dms", async (req, res) => {
             try {
@@ -173,7 +183,7 @@ export default class ChatServer extends Componentry.Module {
 
     async createChannel(account, data) {
         const writeAccess = await this.connector.acl.test.write({ user: account.userId }, { account: account.id });
-        if (!writeAccess) throw new Error('unauthorized');
+        if (!writeAccess) throw new Error('You do not have permission to create channels. Please contact your administrator for write access.');
 
         const channel = {
             _id: Componentry.IdForge.datedId(),
@@ -209,6 +219,30 @@ export default class ChatServer extends Componentry.Module {
         channel.members = members;
 
         return channel;
+    }
+
+    async updateChannel(account, channelId, data) {
+        const channel = await this.channelsCollection.findOne({ _id: channelId });
+        if (!channel) throw new Error('Channel not found');
+
+        // Only creator can update channel, and DMs cannot be updated
+        if (channel.type === 'dm') throw new Error('Direct messages cannot be edited');
+        if (channel.createdBy !== account.userId) throw new Error('Only the channel creator can edit this channel');
+
+        const updates = {
+            modifiedAt: new Date()
+        };
+
+        if (data.name !== undefined) updates.name = data.name;
+        if (data.description !== undefined) updates.description = data.description;
+        if (data.type !== undefined && data.type !== 'dm') updates.type = data.type;
+
+        await this.channelsCollection.updateOne(
+            { _id: channelId },
+            { $set: updates }
+        );
+
+        return await this.channelsCollection.findOne({ _id: channelId });
     }
 
     // Direct message operations

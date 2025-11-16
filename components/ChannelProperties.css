@@ -1,0 +1,236 @@
+/* ChannelProperties component styles */
+. {
+    /* This component IS the overlay */
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: rgba(0, 0, 0, 0.5) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 10000 !important;
+    animation: fadeIn 0.2s;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.channel-properties-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: rgba(0, 0, 0, 0.5) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 10000 !important;
+    animation: fadeIn 0.2s;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.channel-properties-dialog-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.channel-properties-dialog {
+    background: var(--bg-color-properties, var(--bg-color, white));
+    color: var(--text-color, #333);
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 500px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    animation: slideUp 0.2s;
+    pointer-events: all;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.channel-properties-header {
+    padding: var(--spacer, 12px);
+    border-bottom: 1px solid var(--page-border, #009DDC);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--bg-color-properties, white);
+}
+
+.channel-properties-header h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-color, #333);
+}
+
+.channel-properties-body {
+    padding: var(--spacer, 12px);
+    overflow-y: auto;
+    flex: 1;
+}
+
+.form-group {
+    margin-bottom: var(--spacer, 12px);
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--text-color, #333);
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid var(--page-border, #009DDC);
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--action-color-hilite, #5ab8e7);
+    box-shadow: 0 0 0 2px rgba(90, 184, 231, 0.1);
+}
+
+.form-info {
+    padding: 0.75rem;
+    background: var(--bg-color-quiet, #e3f2fd);
+    border-left: 3px solid var(--page-border, #009DDC);
+    border-radius: 4px;
+    margin-bottom: var(--spacer, 12px);
+    color: var(--text-color, #333);
+}
+
+.dm-participants {
+    padding: 0.5rem;
+    background: var(--bg-color-tray, #f5f5f5);
+    border-radius: 4px;
+    font-family: monospace;
+}
+
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.radio-label {
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    grid-template-rows: auto auto;
+    align-items: start;
+    padding: 0.75rem;
+    border: 1px solid var(--page-border, #009DDC);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    gap: 0 0.5rem;
+}
+
+.radio-label:hover {
+    background: var(--action-color-hilite, rgba(90, 184, 231, 0.1));
+}
+
+.radio-label input[type="radio"] {
+    grid-column: 1;
+    grid-row: 1 / 3;
+    margin: 0.25rem 0 0 0;
+    cursor: pointer;
+}
+
+.radio-label .icon {
+    grid-column: 2;
+    grid-row: 1;
+    margin-top: 0.1rem;
+}
+
+.radio-label > span:not(.icon):not(.radio-description) {
+    grid-column: 3;
+    grid-row: 1;
+    font-weight: 500;
+}
+
+.radio-description {
+    grid-column: 2 / 4;
+    grid-row: 2;
+    font-size: 0.875rem;
+    color: var(--text-color, #666);
+    opacity: 0.8;
+    margin-top: 0.25rem;
+}
+
+.radio-label input[type="radio"]:checked ~ .icon,
+.radio-label input[type="radio"]:checked ~ span {
+    color: var(--action-color-hilite, #5ab8e7);
+}
+
+.channel-properties-footer {
+    padding: var(--spacer, 12px);
+    border-top: 1px solid var(--page-border, #009DDC);
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    background: var(--bg-color-properties, white);
+}
+
+.btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background: var(--action-color, #000000);
+    color: var(--bg-color, #FFFAFF);
+}
+
+.btn-primary:hover {
+    background: var(--action-color-hilite, #5ab8e7);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--text-color, #333);
+    border: 1px solid var(--page-border, #009DDC);
+}
+
+.btn-secondary:hover {
+    background: var(--action-color-hilite, rgba(90, 184, 231, 0.1));
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .channel-properties-dialog {
+        width: 95%;
+        max-height: 90vh;
+    }
+}
