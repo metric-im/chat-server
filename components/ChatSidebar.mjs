@@ -174,7 +174,7 @@ export default class ChatSidebar extends Component {
     }
 
     async createChannel() {
-        const name = await window.popup.prompt('Enter channel name:');
+        const name = await window.toast.prompt('Enter channel name:');
         if (!name) return;
 
         const type = await window.popup.confirm(

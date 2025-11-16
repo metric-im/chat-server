@@ -12,11 +12,12 @@
 .chat-sidebar {
     width: 280px;
     min-width: 280px;
-    background: var(--background-secondary, #f5f5f5);
-    border-right: 1px solid var(--border-color, #ddd);
+    background: transparent;
+    border-right: 1px solid var(--page-border, var(--border-color, #ddd));
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    color: var(--bg-color, var(--text-color, inherit));
 }
 
 .sidebar-header {
@@ -45,7 +46,8 @@
 }
 
 .icon-button:hover {
-    background: var(--hover-background, #e0e0e0);
+    background: var(--action-color-hilite, rgba(255, 255, 255, 0.1));
+    opacity: 0.8;
 }
 
 .icon-button-small {
@@ -58,7 +60,8 @@
 }
 
 .icon-button-small:hover {
-    background: var(--hover-background, #e0e0e0);
+    background: var(--action-color-hilite, rgba(255, 255, 255, 0.1));
+    opacity: 0.8;
 }
 
 .icon-button-tiny {
@@ -120,12 +123,13 @@
 }
 
 .channel-item:hover {
-    background: var(--hover-background, #e0e0e0);
+    background: var(--action-color-hilite, rgba(255, 255, 255, 0.1));
+    opacity: 0.9;
 }
 
 .channel-item.active {
-    background: var(--active-background, #007bff);
-    color: white;
+    background: var(--action-color, var(--active-background, #007bff));
+    color: var(--bg-color, white);
 }
 
 .channel-item .icon {
